@@ -11,6 +11,7 @@ public class ServiceGenerator {
             .baseUrl(Constants.Base_URL)
             .addConverterFactory(GsonConverterFactory.create());
 
+
     private static Retrofit retrofit = builder.build();
 
     private static RecipeApi recipeApi = retrofit.create(RecipeApi.class);
