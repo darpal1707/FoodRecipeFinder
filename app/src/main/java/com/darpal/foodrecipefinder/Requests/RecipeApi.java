@@ -20,6 +20,6 @@ public interface RecipeApi {
     @GET("api/get")
     Call<RecipeResponse> recipeResponse(
             @Query("key") String key,
-            @Query("rid") String recipe_id
+            @Query("rId") String recipe_id
     );
 }
