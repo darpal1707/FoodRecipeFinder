@@ -1,6 +1,8 @@
 package com.darpal.foodrecipefinder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
 import android.util.Log;
@@ -14,6 +16,7 @@ import com.darpal.foodrecipefinder.Requests.Responses.RecipeResponse;
 import com.darpal.foodrecipefinder.Requests.Responses.RecipeSearchResponse;
 import com.darpal.foodrecipefinder.Requests.ServiceGenerator;
 import com.darpal.foodrecipefinder.Util.Constants;
+import com.darpal.foodrecipefinder.ViewModel.RecipeListViewModel;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,21 +32,25 @@ import retrofit2.Response;
 public class RecipeListActivity extends BaseActivity {
 
     Button button;
+    private RecipeListViewModel recipeListViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
-        button = (Button) findViewById(R.id.testButton);
-        button.setOnClickListener(new View.OnClickListener() {
+        recipeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
+        subscribeObservers();
+    }
+
+    private void subscribeObservers(){
+        recipeListViewModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
-            public void onClick(View v) {
-               testRetrofit();
+            public void onChanged(List<Recipe> recipes) {
+
             }
         });
     }
-
     public void testRetrofit(){
         RecipeApi recipeApi = ServiceGenerator.getRecipeApi();
 
@@ -107,4 +114,5 @@ public class RecipeListActivity extends BaseActivity {
             }
         });
     }
+
 }
