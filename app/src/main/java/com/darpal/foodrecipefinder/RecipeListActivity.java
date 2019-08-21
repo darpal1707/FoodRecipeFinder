@@ -3,9 +3,24 @@ package com.darpal.foodrecipefinder;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.darpal.foodrecipefinder.Model.Recipe;
+import com.darpal.foodrecipefinder.Requests.RecipeApi;
+import com.darpal.foodrecipefinder.Requests.Responses.RecipeSearchResponse;
+import com.darpal.foodrecipefinder.Requests.ServiceGenerator;
+import com.darpal.foodrecipefinder.Util.Constants;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 //RECIPE LIST ACTIVITY ====> RecipeListActivity
@@ -23,11 +38,43 @@ public class RecipeListActivity extends BaseActivity {
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (mProgressBar.getVisibility() == View.VISIBLE) {
-                    showProgress(false);
-                } else {
-                    showProgress(true);
+               testRetrofit();
+            }
+        });
+    }
+
+    public void testRetrofit(){
+        RecipeApi recipeApi = ServiceGenerator.getRecipeApi();
+
+        Call<RecipeSearchResponse> searchResponseCall = recipeApi.searchRecipe(
+                Constants.API_KEY,
+                "Chicken",
+                "2"
+        );
+
+        searchResponseCall.enqueue(new Callback<RecipeSearchResponse>() {
+            @Override
+            public void onResponse(Call<RecipeSearchResponse> call, Response<RecipeSearchResponse> response) {
+                Log.d("Response", "on server response: "+ response.toString());
+                if(response.code() == 200){
+                    Log.d("Response success", response.body().toString());
+                    List<Recipe> recipes = new ArrayList<>(response.body().getRecipes());
+                    for(Recipe recipe : recipes){
+                        Log.d("recipe titles are:", recipe.getTitle());
+                    }
                 }
+                else {
+                    try {
+                        Log.d("some other code", response.errorBody().toString());
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            @Override
+            public void onFailure(Call<RecipeSearchResponse> call, Throwable t) {
+
             }
         });
     }
