@@ -5,16 +5,18 @@ import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.darpal.foodrecipefinder.Model.Recipe;
+import com.darpal.foodrecipefinder.Repository.RecipeRepository;
 
 import java.util.List;
 
 public class RecipeListViewModel extends ViewModel {
 
-    private MutableLiveData<List<Recipe>> mutableLiveData = new MutableLiveData<>();
+    private RecipeRepository repository;
+    public RecipeListViewModel() {
+        repository = RecipeRepository.getInstance();
+    }
 
-    public RecipeListViewModel() { }
-
-    public LiveData<List<Recipe>> getRecipes(){
-        return mutableLiveData;
+    public LiveData<List<Recipe>> getRecipes() {
+        return repository.getRecipe();
     }
 }
