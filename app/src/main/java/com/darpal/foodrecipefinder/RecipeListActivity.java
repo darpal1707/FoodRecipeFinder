@@ -3,6 +3,8 @@ package com.darpal.foodrecipefinder;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -11,6 +13,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.darpal.foodrecipefinder.Adapters.OnRecipeListener;
+import com.darpal.foodrecipefinder.Adapters.RecipeAdapter;
 import com.darpal.foodrecipefinder.Model.Recipe;
 import com.darpal.foodrecipefinder.Requests.RecipeApi;
 import com.darpal.foodrecipefinder.Requests.Responses.RecipeResponse;
@@ -30,26 +34,22 @@ import retrofit2.Response;
 
 //RECIPE LIST ACTIVITY ====> RecipeListActivity
 
-public class RecipeListActivity extends BaseActivity {
+public class RecipeListActivity extends BaseActivity implements OnRecipeListener {
 
-    Button button;
+    RecyclerView recyclerView;
     private RecipeListViewModel recipeListViewModel;
+    RecipeAdapter recipeAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_recipe_list);
 
+        recyclerView = (RecyclerView) findViewById(R.id.recipe_recycler);
+        initRecyclerView();
         recipeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
         subscribeObservers();
-
-        button = (Button) findViewById(R.id.testButton);
-        button.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                testRetrofit();
-            }
-        });
+        testRetrofit();
     }
 
     private void subscribeObservers(){
@@ -60,15 +60,34 @@ public class RecipeListActivity extends BaseActivity {
                     for (Recipe recipe : recipes) {
                         Log.d("Recipe Titles", recipe.getTitle());
                     }
+                    recipeAdapter.setRecipes(recipes);
                 }
+
             }
         });
     }
+
+    private void initRecyclerView(){
+        recipeAdapter = new RecipeAdapter(this);
+        recyclerView.setAdapter(recipeAdapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+    }
+
     public void testRetrofit(){
      searchRecipesApi("Chicken", 1);
     }
 
     private void searchRecipesApi(String query, int pageNumber){
         recipeListViewModel.searchRecipesApi(query, pageNumber);
+    }
+
+    @Override
+    public void onRecipeClick(int position) {
+
+    }
+
+    @Override
+    public void onCategoryClick(String category) {
+
     }
 }

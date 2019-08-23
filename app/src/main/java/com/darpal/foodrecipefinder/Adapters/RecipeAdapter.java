@@ -7,6 +7,8 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.darpal.foodrecipefinder.Model.Recipe;
 import com.darpal.foodrecipefinder.R;
 
@@ -17,8 +19,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private List<Recipe> recipes;
     private OnRecipeListener onRecipeListener;
 
-    public RecipeAdapter(List<Recipe> recipes, OnRecipeListener onRecipeListener) {
-        this.recipes = recipes;
+    public RecipeAdapter(OnRecipeListener onRecipeListener) {
         this.onRecipeListener = onRecipeListener;
     }
 
@@ -31,6 +32,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+
+        RequestOptions requestOptions = new RequestOptions()
+                .placeholder(R.drawable.ic_launcher_background);
+        Glide.with(holder.itemView.getContext())
+                .setDefaultRequestOptions(requestOptions)
+                .load(recipes.get(position).getImage_url())
+                .into(((RecipeViewHolder)holder).imageView);
+
         ((RecipeViewHolder)holder).title.setText(recipes.get(position).getTitle());
         ((RecipeViewHolder)holder).publisher.setText(recipes.get(position).getPublisher());
         ((RecipeViewHolder)holder).socialScore.setText(String.valueOf(Math.round(recipes.get(position).getSocial_rank())));
@@ -39,11 +48,14 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
 
     @Override
     public int getItemCount() {
-        return recipes.size();
+        if(recipes != null) {
+            return recipes.size();
+        }
+        return 0;
     }
 
-    public void setRecipes(List<Recipe> recipes){
-        recipes = recipes;
+    public void setRecipes(List<Recipe> recipe){
+        recipes = recipe;
         notifyDataSetChanged();
     }
 }
