@@ -1,6 +1,7 @@
 package com.darpal.foodrecipefinder.Requests;
 
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
@@ -41,11 +42,11 @@ public class RecipeApiClient {
         return mRecipes;
     }
 
-    public void searchRecipeApi(String query, int pageno) {
+    public void searchRecipeApi(String query, int pageNumber) {
         if(recipesRunnable != null){
             recipesRunnable = null;
         }
-        recipesRunnable = new retrieveRecipesRunnable(query, pageno);
+        recipesRunnable = new retrieveRecipesRunnable(query, pageNumber);
         final Future handler = AppExecutors.getInstance().networkIO().submit(recipesRunnable);
 
         AppExecutors.getInstance().networkIO().schedule(new Runnable() {
@@ -61,24 +62,26 @@ public class RecipeApiClient {
     private class retrieveRecipesRunnable implements Runnable{
 
         private String query;
-        private int pageno;
-        Boolean cancelRequest;
+        private int pageNumber;
+        private Boolean cancelRequest;
 
-        public retrieveRecipesRunnable(String query, int pageno) {
+        public retrieveRecipesRunnable(String query, int pageNumber) {
             this.query = query;
-            this.pageno = pageno;
+            this.pageNumber = pageNumber;
             cancelRequest = false;
         }
         @Override
         public void run() {
             try {
-                Response response = getRecipes(query,pageno).execute();
-                if (cancelRequest = true){
+                Response response = getRecipes(query,pageNumber).execute();
+                Log.d("Response code", String.valueOf(response.code()));
+                Log.d("cancel request", String.valueOf(cancelRequest));
+                if (cancelRequest == true){
                     return;
                 }
                 if(response.code() == 200){
                     List<Recipe> recipeList = new ArrayList<>(((RecipeSearchResponse)response.body()).getRecipes());
-                    if(pageno ==1){
+                    if(pageNumber == 1){
                         mRecipes.postValue(recipeList);
                     }
                     else {
@@ -89,7 +92,7 @@ public class RecipeApiClient {
                 }
                 else {
                     String error = response.errorBody().string();
-                    Log.e("Error code", error);
+                    Log.d("Error code", " " + error);
                     mRecipes.postValue(null);
                 }
             } catch (IOException e) {
@@ -98,11 +101,11 @@ public class RecipeApiClient {
 
         }
 
-        private Call<RecipeSearchResponse> getRecipes(String query, int pageno){
+        private Call<RecipeSearchResponse> getRecipes(String query, int pageNumber){
             return ServiceGenerator.getRecipeApi().searchRecipe(
                     Constants.API_KEY,
                     query,
-                    String.valueOf(pageno)
+                    String.valueOf(pageNumber)
             );
         }
 

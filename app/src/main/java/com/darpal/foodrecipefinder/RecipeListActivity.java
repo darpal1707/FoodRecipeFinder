@@ -5,6 +5,7 @@ import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -41,78 +42,33 @@ public class RecipeListActivity extends BaseActivity {
 
         recipeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
         subscribeObservers();
+
+        button = (Button) findViewById(R.id.testButton);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                testRetrofit();
+            }
+        });
     }
 
     private void subscribeObservers(){
         recipeListViewModel.getRecipes().observe(this, new Observer<List<Recipe>>() {
             @Override
             public void onChanged(List<Recipe> recipes) {
-
+                if(recipes!=null) {
+                    for (Recipe recipe : recipes) {
+                        Log.d("Recipe Titles", recipe.getTitle());
+                    }
+                }
             }
         });
     }
     public void testRetrofit(){
-        RecipeApi recipeApi = ServiceGenerator.getRecipeApi();
-
-        /*Call<RecipeSearchResponse> searchResponseCall = recipeApi.searchRecipe(
-                Constants.API_KEY,
-                "Chicken",
-                "2"
-        );
-        searchResponseCall.enqueue(new Callback<RecipeSearchResponse>() {
-            @Override
-            public void onResponse(Call<RecipeSearchResponse> call, Response<RecipeSearchResponse> response) {
-                Log.d("Response", "on server response: "+ response.toString());
-                if(response.code() == 200){
-                    Log.d("Response success", response.body().toString());
-                    List<Recipe> recipes = new ArrayList<>(response.body().getRecipes());
-                    for(Recipe recipe : recipes){
-                        Log.d("recipe titles are:", recipe.getTitle() + " " + recipe.getRecipe_id());
-                    }
-                }
-                else {
-                    try {
-                        Log.d("some other code", response.errorBody().toString());
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-            }
-            @Override
-            public void onFailure(Call<RecipeSearchResponse> call, Throwable t) { }
-
-
-        });*/
-
-
-        //******** Code for showing a particular recipe on click ********\\
-        Call<RecipeResponse> responseCall = recipeApi.recipeResponse(
-                Constants.API_KEY,
-                "35382"
-        );
-        responseCall.enqueue(new Callback<RecipeResponse>() {
-            @Override
-            public void onResponse(Call<RecipeResponse> call, Response<RecipeResponse> response) {
-                Log.d("Response", "on server response: "+ response.toString());
-                if(response.code() == 200){
-                    Log.d("Response success", response.body().toString());
-                    Recipe recipe = response.body().getRecipe();
-                    Log.d("recipe received", recipe.toString());
-                }
-                else {
-                    try {
-                        Log.d("error", response.errorBody().string());
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RecipeResponse> call, Throwable t) {
-
-            }
-        });
+     searchRecipesApi("Chicken", 1);
     }
 
+    private void searchRecipesApi(String query, int pageNumber){
+        recipeListViewModel.searchRecipesApi(query, pageNumber);
+    }
 }
