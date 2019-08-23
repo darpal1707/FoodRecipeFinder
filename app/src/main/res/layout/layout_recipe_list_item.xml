@@ -10,6 +10,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/card_view"
         app:cardElevation="10dp"
+        android:layout_margin="10dp"
         android:elevation="10dp"
         app:cardCornerRadius="5dp">
 
@@ -23,7 +24,6 @@
                 android:layout_height="@dimen/recipe_image_height"
                 android:scaleType="centerCrop"
                 android:id="@+id/recipe_image"
-                android:layout_margin="5dp"
                 android:src="@drawable/ic_launcher_background"/>
 
 
@@ -32,7 +32,6 @@
                 android:layout_height="150dp"
                 android:orientation="vertical"
                 android:layout_toEndOf="@+id/recipe_image"
-                android:layout_margin="0dp"
                 android:padding="10dp">
 
                 <TextView
@@ -40,7 +39,6 @@
                     android:layout_height="wrap_content"
                     android:textSize="@dimen/recipe_title_textSize"
                     android:textColor="#000"
-                    android:layout_marginTop="10dp"
                     android:id="@+id/recipe_title"/>
 
                 <RelativeLayout
@@ -49,9 +47,9 @@
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="0dp"
+                        android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="10dp"
+                        android:layout_marginTop="5dp"
                         android:textSize="@dimen/recipe_publisher_textSize"
                         android:id="@+id/recipe_publisher"
                         android:gravity="start"/>
@@ -61,7 +59,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentBottom="true"
                         android:layout_alignParentEnd="true"
-                        android:layout_marginEnd="20dp"
+                        android:layout_marginEnd="10dp"
                         android:textSize="@dimen/recipe_publisher_textSize"
                         android:textColor="@color/red"
                         android:id="@+id/recipe_social_score"
