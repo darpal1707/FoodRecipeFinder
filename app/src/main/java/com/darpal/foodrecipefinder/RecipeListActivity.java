@@ -1,6 +1,7 @@
 package com.darpal.foodrecipefinder;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.SearchView;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -49,7 +50,7 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         initRecyclerView();
         recipeListViewModel = ViewModelProviders.of(this).get(RecipeListViewModel.class);
         subscribeObservers();
-        testRetrofit();
+        initSearchView();
     }
 
     private void subscribeObservers(){
@@ -73,12 +74,21 @@ public class RecipeListActivity extends BaseActivity implements OnRecipeListener
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    public void testRetrofit(){
-     searchRecipesApi("Chicken", 1);
-    }
 
-    private void searchRecipesApi(String query, int pageNumber){
-        recipeListViewModel.searchRecipesApi(query, pageNumber);
+    private void initSearchView(){
+        final androidx.appcompat.widget.SearchView searchView =  findViewById(R.id.search_view);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                recipeListViewModel.searchRecipesApi(query, 1);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
     }
 
     @Override
